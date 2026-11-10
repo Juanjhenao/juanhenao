@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Hook File: 24 fill-in-the-blank ad hooks · Juan José Henao</title>
+<meta name="description" content="24 fill-in-the-blank hooks for short-form ads, in six families. Type your product and audience, copy the hooks that fit.">
+<meta name="theme-color" content="#0A0A0B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230A0A0B'/%3E%3Cpath d='M12 9v14l11-7z' fill='%23FF5A2B'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tool.css">
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Juan José Henao</a>
+  <h1>The Hook <em>File.</em></h1>
+  <p class="lede">Twenty-four hooks for short-form ads, in six families. Fill in the five fields once and every hook rewrites itself for your product. Copy the ones that sound like you, then test three against each other.</p>
+
+  <div class="fields">
+    <label class="field"><span>Product</span><input data-k="product" placeholder="creatine gummies" autocomplete="off"></label>
+    <label class="field"><span>Who buys it</span><input data-k="audience" placeholder="busy founders" autocomplete="off"></label>
+    <label class="field"><span>The result they want</span><input data-k="result" placeholder="steady energy all day" autocomplete="off"></label>
+    <label class="field"><span>The problem they have</span><input data-k="pain" placeholder="the 3 pm crash" autocomplete="off"></label>
+    <label class="field field--wide"><span>A number or time frame</span><input data-k="number" placeholder="30 days" autocomplete="off"></label>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="end">
+    <h3>A hook is only as good as its first frame.</h3>
+    <p>Words are half of it. The other half is what moves, what is on screen and what it sounds like in the first second. That part is what I do.</p>
+    <div class="row">
+      <a class="btn btn--accent" id="wa" target="_blank" rel="noopener" data-track="wa-hooks" href="#">Have me cut these into ads</a>
+      <a class="btn btn--ghost" href="checklist.html" data-track="open-checklist">Score your current ad</a>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/track.js"></script>
+<script>
+  const FAMILIES = [
+    ["Curiosity", "open a loop they have to close", [
+      "The reason {audience} still deal with {pain} has nothing to do with willpower.",
+      "I tried {product} for {number}. Here is what nobody mentions.",
+      "Nobody tells {audience} this about {result}.",
+      "There is one thing {product} does that I did not expect.",
+    ]],
+    ["Problem first", "name the pain before the product", [
+      "If you are tired of {pain}, watch this before you buy anything else.",
+      "{pain} is not normal. It just became common.",
+      "You do not need more discipline. You need to fix {pain}.",
+      "Still dealing with {pain}? This took me {number} to figure out.",
+    ]],
+    ["Number and proof", "a figure makes it concrete", [
+      "{number} with {product}. Here is the honest result.",
+      "What {number} of {product} actually did for {result}.",
+      "I tracked {result} for {number}. One change mattered.",
+      "{audience}: this is what {number} of {pain} is costing you.",
+    ]],
+    ["Contrarian", "disagree with what they already believe", [
+      "Stop trying to fix {pain} the way everyone tells you to.",
+      "Unpopular opinion: most {audience} do not need another routine. They need {product}.",
+      "Everything you were told about {result} is backwards.",
+      "{product} is not for everyone. It is for {audience} who want {result}.",
+    ]],
+    ["Story and point of view", "start in the middle of a scene", [
+      "POV: you finally got {result} and it took {number}.",
+      "A month ago I could not get through the day without {pain}.",
+      "My friend asked how I got {result}. I showed her this.",
+      "I almost returned {product}. Then week two happened.",
+    ]],
+    ["Direct offer", "say exactly what it is and who it is for", [
+      "{product}: {result} for {audience}, without {pain}.",
+      "{audience}, this is your sign to try {product}.",
+      "Try {product} for {number}. Keep it only if you get {result}.",
+      "The fastest way I know for {audience} to get {result}.",
+    ]],
+  ];
+  const fields = [...document.querySelectorAll("[data-k]")];
+  const val = (k) => fields.find((f) => f.dataset.k === k).value.trim();
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const fill = (tpl, html) => {
+    const out = tpl.replace(/\{(\w+)\}/g, (_, k) => {
+      const v = val(k);
+      if (!html) return v || `[${k}]`;
+      return `<mark class="${v ? "is-set" : ""}">${esc(v || fields.find((f) => f.dataset.k === k).placeholder)}</mark>`;
+    });
+    return html ? out.replace(/^(<mark[^>]*>)?(.)/, (m, a, c) => (a || "") + c.toUpperCase()) : cap(out);
+  };
+  const list = document.getElementById("list");
+  function render() {
+    let n = 0;
+    list.innerHTML = FAMILIES.map(([name, why, tpls], i) => `
+      <h2><span>${String(i + 1).padStart(2, "0")}</span>${name} <small>${why}</small></h2>
+      ${tpls.map((t) => `<div class="hook"><p>${fill(t, true)}</p><button class="copy" type="button" data-i="${n++}">Copy</button></div>`).join("")}`).join("");
+  }
+  const all = FAMILIES.flatMap((f) => f[2]);
+  list.addEventListener("click", async (e) => {
+    const b = e.target.closest(".copy"); if (!b) return;
+    const text = fill(all[+b.dataset.i], false);
+    try { await navigator.clipboard.writeText(text); } catch { const ta = Object.assign(document.createElement("textarea"), { value: text }); document.body.append(ta); ta.select(); document.execCommand("copy"); ta.remove(); }
+    b.textContent = "Copied"; b.classList.add("is-done"); JJ.track("copy-hook");
+    setTimeout(() => { b.textContent = "Copy"; b.classList.remove("is-done"); }, 1400);
+  });
+  fields.forEach((f) => f.addEventListener("input", () => { render(); wa(); }));
+  function wa() {
+    const p = val("product");
+    document.getElementById("wa").href = JJ.wa(`Hi Juan, I used the Hook File${p ? ` for ${p}` : ""} and want to turn the best hooks into ads.`, "hook-file");
+  }
+  render(); wa(); JJ.track("open-hook-file");
+</script>
+</body>
+</html>

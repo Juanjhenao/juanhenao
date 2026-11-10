@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Frame-Zero Checklist · Juan José Henao</title>
+<meta name="description" content="Twelve checks to score a short-form ad in five minutes, before you spend on it.">
+<meta name="theme-color" content="#0A0A0B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230A0A0B'/%3E%3Cpath d='M12 9v14l11-7z' fill='%23FF5A2B'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0a0a0b; --bg2:#121214; --line:rgba(243,239,231,.12); --ink:#f3efe7; --mute:#a09b92; --dim:#6d6962; --accent:#ff5a2b; --on:#120703; --ease:cubic-bezier(.16,1,.3,1); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.55 "Inter", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: clamp(28px, 6vw, 72px) clamp(16px, 5vw, 40px) 140px; }
+  a { color: inherit; }
+  .back { font: 400 12px/1 "JetBrains Mono", monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); text-decoration: none; }
+  .back:hover { color: var(--ink); }
+  h1 { margin: 34px 0 18px; font: 700 clamp(44px, 9vw, 96px)/.93 "Inter Tight", sans-serif; letter-spacing: -.05em; text-wrap: balance; }
+  em { font: italic 400 1.06em "Instrument Serif", serif; color: var(--accent); letter-spacing: -.02em; }
+  .lede { max-width: 58ch; color: var(--mute); font-size: clamp(16px, 2vw, 19px); }
+  .how { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 0; padding: 0; list-style: none; }
+  .how li { padding: 8px 14px; border-radius: 999px; font-size: 13.5px; color: var(--mute); box-shadow: inset 0 0 0 1px var(--line); }
+  h2 { display: flex; align-items: baseline; gap: 14px; margin: 56px 0 6px; font: 700 clamp(24px, 3.4vw, 34px)/1.1 "Inter Tight", sans-serif; letter-spacing: -.03em; }
+  h2 span { font: 400 12px/1 "JetBrains Mono", monospace; letter-spacing: .08em; color: var(--accent); }
+  .item { display: grid; grid-template-columns: 34px 1fr; gap: 14px; padding: 18px 0; border-top: 1px solid var(--line); cursor: pointer; }
+  .item input { position: absolute; opacity: 0; }
+  .box { display: grid; place-items: center; width: 28px; height: 28px; margin-top: 1px; border-radius: 9px; box-shadow: inset 0 0 0 1.5px rgba(243,239,231,.3); transition: background .25s, box-shadow .25s, transform .35s var(--ease); }
+  .box svg { width: 15px; height: 15px; fill: none; stroke: var(--on); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 22; stroke-dashoffset: 22; transition: stroke-dashoffset .35s var(--ease) .05s; }
+  .item:hover .box { box-shadow: inset 0 0 0 1.5px var(--accent); }
+  .item input:checked + .box { background: var(--accent); box-shadow: none; transform: scale(1.06); }
+  .item input:checked + .box svg { stroke-dashoffset: 0; }
+  .item input:focus-visible + .box { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .item b { display: block; font: 600 17px/1.3 "Inter", sans-serif; }
+  .item p { margin: 4px 0 0; color: var(--mute); font-size: 15px; }
+  .score { position: fixed; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; align-items: center; gap: 16px; width: min(560px, calc(100vw - 24px)); padding: 12px 12px 12px 20px; border-radius: 999px; background: rgba(18,18,20,.86); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: inset 0 0 0 1px rgba(243,239,231,.18), 0 18px 40px -12px #000; }
+  .score__n { font: 700 26px/1 "Inter Tight", sans-serif; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .score__n small { font-size: 15px; color: var(--dim); font-weight: 600; }
+  .score__t { flex: 1; min-width: 0; font-size: 13.5px; line-height: 1.3; color: var(--mute); }
+  .btn { display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; background: var(--accent); color: var(--on); font-weight: 600; font-size: 14px; text-decoration: none; white-space: nowrap; transition: transform .3s var(--ease); }
+  .btn:hover { transform: translateY(-2px); }
+  .end { margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--line); color: var(--mute); font-size: 15px; }
+  .end strong { color: var(--ink); }
+  @media (max-width: 520px) { .score__t { display: none; } .score { justify-content: space-between; } }
+  @media print {
+    body { background: #fff; color: #111; } .score, .back { display: none; } .wrap { padding: 0; }
+    .lede, .item p, .how li, .end { color: #444; } .item { break-inside: avoid; border-color: #ddd; }
+    .box { box-shadow: inset 0 0 0 1.5px #999; } em, h2 span { color: #c8400f; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Juan José Henao</a>
+  <h1>The Frame-Zero <em>Checklist.</em></h1>
+  <p class="lede">Twelve checks I run on every edit before it ships. Run them on the ad you’re paying to show right now. It takes about five minutes and one honest watch with the sound on.</p>
+  <ul class="how">
+    <li>Watch it once at normal speed</li><li>Watch it again frame by frame at the start</li><li>Tick only what is fully true</li>
+  </ul>
+
+  <h2><span>01</span>Hook</h2>
+  <label class="item"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b>The text hook is on screen on frame zero.</b><p>Pause on the very first frame. If there is no readable hook yet, the thumb has already moved on.</p></span></label>
+  <label class="item"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b>The hook has tension, a specific detail or a pattern break.</b><p>“Not all roofs are the same” has none of the three. A date, a number or a threat does.</p></span></label>
+  <label class="item"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b>Something moves in the first second.</b><p>A punch-in, a title landing, a hand entering frame. A still talking head reads as a photo.</p></span></label>
+
+  <h2><span>02</span>Cut</h2>
+  <label class="item"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b>No pause is longer than a fifth of a second.</b><p>Listen for breaths and dead air between phrases. Each one is a place to leave.</p></span></label>
+  <label class="item"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b>Every cut lands on a full phrase.</b><p>No clipped first or last syllable anywhere. Tight is good, mutilated is not.</p></span></label>
+  <label class="item"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b>The presenter is never hidden for more than four seconds.</b><p>B-roll and graphics support the person selling. They don’t replace them.</p></span></label>
+
+  <h2><span>03</span>Motion</h2>
+  <label class="item"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b>Each claim gets one animation, and each number gets a counter.</b><p>If a price, saving or rating is only spoken, most viewers never register it.</p></span></label>
+  <label class="item"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b>All text sits inside the safe zone.</b><p>Nothing under the caption area, the like buttons or the profile row of the app it runs on.</p></span></label>
+  <label class="item"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b>Face, mouth and product are never covered.</b><p>Check the whole path of every title, not only where it comes to rest.</p></span></label>
+  <label class="item"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b>No transition passes through black.</b><p>A dip to black is a natural exit. Carry one element across the cut instead.</p></span></label>
+
+  <h2><span>04</span>Sound</h2>
+  <label class="item"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b>Every visible animation has its own sound.</b><p>And it hits on the same frame the motion peaks. Silent motion looks cheap.</p></span></label>
+  <label class="item"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b>The voice is always the loudest thing.</b><p>Effects and music stay well under it, and nothing distorts on a phone speaker.</p></span></label>
+
+  <p class="end"><strong>10 to 12:</strong> the edit is not your problem, test new angles. <strong>7 to 9:</strong> fixable in one revision round. <strong>6 or fewer:</strong> the ad is losing people before your offer is heard, and a re-edit will pay for itself faster than more budget.</p>
+</div>
+
+<div class="score">
+  <span class="score__n"><span id="n">0</span><small> / 12</small></span>
+  <span class="score__t" id="t">Tick what is fully true for your ad.</span>
+  <a class="btn" id="wa" target="_blank" rel="noopener" data-track="wa-checklist" href="#">Send me your score</a>
+</div>
+
+<script src="assets/js/track.js"></script>
+<script>
+  const boxes = [...document.querySelectorAll("input")], n = document.getElementById("n"), t = document.getElementById("t"), wa = document.getElementById("wa");
+  function update() {
+    const s = boxes.filter((b) => b.checked).length;
+    n.textContent = s;
+    t.textContent = s >= 10 ? "The edit holds up. Time to test new angles." : s >= 7 ? "Fixable in one revision round." : s > 0 ? "It is losing people before the offer lands." : "Tick what is fully true for your ad.";
+    wa.href = JJ.wa("Hi Juan, my ad scored " + s + "/12 on the Frame-Zero Checklist. Can you take a look?", "checklist");
+  }
+  boxes.forEach((b) => b.addEventListener("change", update)); update(); JJ.track("open-checklist");
+</script>
+</body>
+</html>

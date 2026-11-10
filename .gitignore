@@ -1,0 +1,11 @@
+agent/
+tools/
+*.log
+.env
+OPak.txt
+google.txt
+*.key
+.wrangler/
+node_modules/
+whatsapp/
+.dist/
