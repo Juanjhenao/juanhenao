@@ -43,7 +43,7 @@
       if ("split" in el.dataset) splitWords(el);
     });
     $$(".lang span").forEach((s) => s.classList.toggle("is-on", s.dataset.lang === lang));
-    $$("[data-wa]").forEach((a) => { a.href = JJ.wa(t(a.dataset.wa)); });
+    $$("[data-mail]").forEach((a) => { a.href = JJ.mail(lang === "es" ? "Creatividad para anuncios" : "Ad creative", t(a.dataset.mail)); });
     $("#mailto").href = JJ.mail("Ad creative", t("cta.talk"));
     $("#faqlist").innerHTML = FAQ.map((f, i) => `<details class="qa reveal is-in" ${i === 0 ? "open" : ""}><summary><span>${f.q[lang]}</span><i></i></summary><p>${f.a[lang]}</p></details>`).join("");
     renderGrid(); renderProjects(); placePill();
@@ -327,7 +327,7 @@
 
   function fillInfo() {
     const r = reelById(list[idx]);
-    $(".lb__count").textContent = `${String(idx + 1).padStart(2, "0")} / ${String(list.length).padStart(2, "0")} · ${r.brand}`;
+    $(".lb__count").textContent = r.brand;
     $(".lb__title").textContent = r.title;
     $(".lb__kind").textContent = r.kind[lang];
     $(".lb__hook").textContent = r.hook[lang];
@@ -336,12 +336,12 @@
   }
   function load() {
     const r = reelById(list[idx]);
-    $(".lb__player").style.backgroundImage = `url(assets/poster/${r.id}.jpg)`;
     video.poster = `assets/poster/${r.id}.jpg`;
     video.src = `assets/video/${r.id}.mp4`;
     scrub.style.setProperty("--p", 0); scrub.style.setProperty("--b", 0);
     $(".lb__time").textContent = `0:00 / ${r.dur}`;
-    fillInfo();
+    fillInfo(); syncLike();
+    history.replaceState(null, "", `${location.pathname}?reel=${r.id}`);
     video.play().catch(() => lb.classList.add("is-paused"));
   }
   function openReel(id) {
@@ -357,13 +357,15 @@
     $(".lb__close").focus({ preventScroll: true });
   }
   function closeReel() {
-    lb.classList.remove("is-open"); video.pause();
+    lb.classList.remove("is-open"); video.pause(); LiquidHeart.stop();
+    history.replaceState(null, "", location.pathname);
     setTimeout(() => { lb.hidden = true; video.removeAttribute("src"); video.load(); heroVideos(true); }, 320);
     document.documentElement.style.overflow = ""; $(".dock").classList.remove("is-away");
     if (lastFocus) lastFocus.focus({ preventScroll: true });
   }
-  function step(d) {
+  function step(d, y = false) {
     if (list.length < 2) return;
+    lb.classList.toggle("is-y", y);
     lb.style.setProperty("--dir", d); lb.classList.add("is-swap"); video.pause();
     setTimeout(() => {
       idx = (idx + d + list.length) % list.length; load();
@@ -385,7 +387,24 @@
   $(".lb__more").addEventListener("click", () => lb.classList.toggle("is-sheet"));
   video.addEventListener("play", () => lb.classList.remove("is-paused"));
   video.addEventListener("pause", () => { if (!video.ended && !scrub.classList.contains("is-drag")) lb.classList.add("is-paused"); });
-  video.addEventListener("ended", () => step(1));
+  video.addEventListener("ended", () => step(1, true));
+  /* keep the reel's own proportion; whatever the screen has left over stays black */
+  video.addEventListener("loadedmetadata", () => {
+    if (video.videoWidth) lb.style.setProperty("--ar", `${video.videoWidth} / ${video.videoHeight}`);
+  });
+
+  /* scroll (mouse wheel / trackpad) moves through the reels like a feed */
+  let wheelAcc = 0, wheelLock = false, wheelT = 0;
+  lb.addEventListener("wheel", (e) => {
+    const info = e.target.closest(".lb__info");
+    if (info && info.scrollHeight > info.clientHeight + 1) return; /* let the notes scroll */
+    e.preventDefault();
+    clearTimeout(wheelT);
+    wheelT = setTimeout(() => { wheelAcc = 0; wheelLock = false; }, 200); /* waits out trackpad inertia */
+    if (wheelLock) return;
+    wheelAcc += Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    if (Math.abs(wheelAcc) > 40) { wheelLock = true; step(wheelAcc > 0 ? 1 : -1, true); wheelAcc = 0; }
+  }, { passive: false });
   video.addEventListener("timeupdate", () => {
     if (!video.duration) return;
     scrub.style.setProperty("--p", video.currentTime / video.duration);
@@ -393,6 +412,73 @@
   });
   video.addEventListener("progress", () => {
     if (video.duration && video.buffered.length) scrub.style.setProperty("--b", video.buffered.end(video.buffered.length - 1) / video.duration);
+  });
+
+  /* ------------------------------------------------ like (no counts shown) */
+  const likeBtn = $(".lb__like"), glass = $(".lb__glass");
+  const likes = new Set((() => { try { return JSON.parse(store.get("likes") || "[]"); } catch { return []; } })());
+  function syncLike() {
+    const on = likes.has(list[idx]);
+    likeBtn.classList.toggle("is-on", on); likeBtn.setAttribute("aria-pressed", on);
+    likeBtn.classList.remove("is-glass", "is-pop"); LiquidHeart.stop();
+  }
+  /* sound + touch feedback: a short synthesized tick (no audio file) and a tap of vibration */
+  let audio = null;
+  function tick(on) {
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      const t = audio.currentTime, o = audio.createOscillator(), g = audio.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(on ? 520 : 420, t);
+      o.frequency.exponentialRampToValueAtTime(on ? 980 : 300, t + 0.09);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(on ? 0.16 : 0.08, t + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+      o.connect(g).connect(audio.destination); o.start(t); o.stop(t + 0.2);
+    } catch { /* no audio */ }
+  }
+  /* Android: Vibration API. iOS Safari has none, but toggling a native switch gives a haptic tap (iOS 18+). */
+  const hapticSwitch = document.createElement("label");
+  hapticSwitch.setAttribute("aria-hidden", "true");
+  hapticSwitch.style.cssText = "position:fixed;left:-200px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none";
+  hapticSwitch.innerHTML = '<input type="checkbox" switch tabindex="-1">';
+  document.body.appendChild(hapticSwitch);
+  function buzz(on) {
+    if (navigator.vibrate) navigator.vibrate(on ? [14, 40, 22] : 10);
+    else hapticSwitch.click();
+  }
+  /* private count on the server (never shown on the site) */
+  const report = (reel, on) => {
+    if (!location.protocol.startsWith("http")) return;
+    fetch("/api/like", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ reel, on }), keepalive: true }).catch(() => {});
+  };
+
+  likeBtn.addEventListener("click", () => {
+    const id = list[idx], on = !likes.has(id);
+    on ? likes.add(id) : likes.delete(id);
+    store.set("likes", JSON.stringify([...likes]));
+    tick(on); buzz(on); report(id, on);
+    likeBtn.classList.toggle("is-on", on); likeBtn.setAttribute("aria-pressed", on);
+    likeBtn.classList.remove("is-pop", "is-glass");
+    if (!on) return;
+    JJ.track("like-reel", { reel: id });
+    likeBtn.classList.add("is-glass");
+    LiquidHeart.play(glass)
+      .then(() => likeBtn.classList.remove("is-glass"))
+      .catch(() => { likeBtn.classList.remove("is-glass"); void likeBtn.offsetWidth; likeBtn.classList.add("is-pop"); });
+  });
+  if ("requestIdleCallback" in window) requestIdleCallback(() => LiquidHeart.preload());
+
+  /* ------------------------------------------- share: one link per reel */
+  const toast = $(".lb__toast"); let toastT = 0;
+  const say = (t) => { toast.textContent = t; toast.classList.add("is-on"); clearTimeout(toastT); toastT = setTimeout(() => toast.classList.remove("is-on"), 1800); };
+  const shareUrl = (id) => `${location.protocol.startsWith("http") ? location.origin + "/" : SITE}r/${id}`;
+  $(".lb__share").addEventListener("click", async () => {
+    const r = reelById(list[idx]), url = shareUrl(r.id);
+    JJ.track("share-reel", { reel: r.id });
+    if (navigator.share && !FINE) { try { await navigator.share({ title: `${r.title} · ${r.brand}`, url }); } catch { /* closed */ } return; }
+    try { await navigator.clipboard.writeText(url); say(lang === "es" ? "Link copiado" : "Link copied"); }
+    catch { say(url); }
   });
 
   /* scrubbing */
@@ -416,15 +502,17 @@
   tap.addEventListener("pointerup", (e) => {
     const dx = e.clientX - sx, dy = e.clientY - sy, far = Math.max(Math.abs(dx), Math.abs(dy));
     if (far < 12 && performance.now() - st < 500) { toggle(); return; }
-    if (far < 50) return;
-    if (Math.abs(dy) > Math.abs(dx)) step(dy < 0 ? 1 : -1); else step(dx < 0 ? 1 : -1);
+    if (far < 40) return;
+    if (Math.abs(dy) > Math.abs(dx)) step(dy < 0 ? 1 : -1, true); else step(dx < 0 ? 1 : -1);
   });
 
   document.addEventListener("keydown", (e) => {
     if (lb.hidden) return;
     if (e.key === "Escape") closeReel();
-    else if (e.key === "ArrowRight" || e.key === "ArrowDown") step(1);
-    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") step(-1);
+    else if (e.key === "ArrowRight") step(1);
+    else if (e.key === "ArrowLeft") step(-1);
+    else if (e.key === "ArrowDown" || e.key === "PageDown") { e.preventDefault(); step(1, true); }
+    else if (e.key === "ArrowUp" || e.key === "PageUp") { e.preventDefault(); step(-1, true); }
     else if (e.key === " " && !e.target.closest("button")) { e.preventDefault(); toggle(); }
     else if (e.key.toLowerCase() === "m") $(".lb__mute").click();
     else if (e.key === "Tab") { /* keep focus inside the dialog */
@@ -517,17 +605,11 @@
   const tl = $(".tl");
   let ruleTimer = null;
   function setRule(n) {
-    $$(".rule").forEach((r) => r.classList.toggle("is-on", +r.dataset.rule === n));
     tl.dataset.ruleOn = n;
     $$(".clip", tl).forEach((c) => c.classList.toggle("hot", c.dataset.rules.split(",").includes(String(n))));
     $(".tl__head").style.setProperty("--hp", HEAD[n][0] / 100);
     $(".tl__tc").textContent = tc(HEAD[n][1], 30);
   }
-  $$(".rule").forEach((r) => {
-    const pick = () => { clearInterval(ruleTimer); setRule(+r.dataset.rule); };
-    $("button", r).addEventListener("click", pick);
-    if (FINE) r.addEventListener("pointerenter", pick);
-  });
   setRule(0);
   if (!CALM) {
     new IntersectionObserver(([e]) => {
@@ -549,4 +631,7 @@
   const start = location.hash.replace("#", "");
   if (start === "projects") showView("projects");
   else { showView("reels"); if (start && document.getElementById(start) && start !== "reels") setTimeout(() => jump(start), 60); }
+  /* a shared link (/r/<id> → ?reel=<id>) opens that reel straight away */
+  const want = new URLSearchParams(location.search).get("reel");
+  if (want && reelById(want)) openReel(want);
 })();

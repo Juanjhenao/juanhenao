@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>10 ad ideas written for your brand · Juan José Henao</title>
 <meta name="description" content="Tell me what you sell and who buys it. I send back ten short-form ad ideas written for your product, each with its hook.">
-<meta name="theme-color" content="#0A0A0B">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230A0A0B'/%3E%3Cpath d='M12 9v14l11-7z' fill='%23FF5A2B'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#0D1321">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230D1321'/%3E%3Cpath d='M12 9v14l11-7z' fill='%23F0EBD8'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
@@ -33,8 +33,7 @@
       <label class="field field--wide"><span>Anything I should know? (optional)</span><textarea name="notes" rows="3" placeholder="Your best ad so far, what stopped working, where you run ads"></textarea></label>
     </div>
     <div class="row">
-      <a class="btn btn--accent" id="wa" target="_blank" rel="noopener" href="#" aria-disabled="true">Send on WhatsApp</a>
-      <a class="btn btn--ghost" id="mail" href="#" aria-disabled="true">Send by email</a>
+      <a class="btn btn--accent" id="mail" href="#" aria-disabled="true">Send by email</a>
     </div>
     <p class="note" id="note">Fill in the first four fields to send. Nothing is stored on this site: the button opens a message to me with your answers, and I reply to you there.</p>
   </form>
@@ -42,7 +41,7 @@
 
 <script src="assets/js/track.js"></script>
 <script>
-  const form = document.getElementById("form"), wa = document.getElementById("wa"), mail = document.getElementById("mail");
+  const form = document.getElementById("form"), mail = document.getElementById("mail");
   const get = (n) => form.elements[n].value.trim();
   function update() {
     const ok = ["brand", "link", "product", "audience"].every(get);
@@ -55,12 +54,10 @@
       `Who buys: ${get("audience")}`,
       get("notes") ? `Notes: ${get("notes")}` : "",
     ].filter((l, i) => l || i === 1).join("\n");
-    wa.href = JJ.wa(body, "10-ideas");
     mail.href = JJ.mail(`10 ad ideas for ${get("brand") || "my brand"}`, body, "10-ideas");
-    [wa, mail].forEach((b) => b.setAttribute("aria-disabled", ok ? "false" : "true"));
+    [mail].forEach((b) => b.setAttribute("aria-disabled", ok ? "false" : "true"));
   }
   form.addEventListener("input", update);
-  wa.addEventListener("click", () => JJ.track("lead-10-ideas", { via: "whatsapp", brand: get("brand"), link: get("link") }));
   mail.addEventListener("click", () => JJ.track("lead-10-ideas", { via: "email", brand: get("brand"), link: get("link") }));
   update(); JJ.track("open-10-ideas");
 </script>

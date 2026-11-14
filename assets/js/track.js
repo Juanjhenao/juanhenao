@@ -3,7 +3,7 @@
 
    1. Works with no setup: it remembers where each visitor first came
       from (a ?ref= or ?utm_source= tag, or the referring site) and adds
-      a short "(ref: linkedin · checklist)" line to every WhatsApp or
+      a short "(ref: linkedin · checklist)" line to every
       email message the site prepares. You see the source in the message.
    2. Optional counting: put your GoatCounter code in `goatcounter` to
       get page views and button clicks per source (free, no cookies).
@@ -18,7 +18,6 @@
   const CFG = {
     goatcounter: "", // e.g. "juanjhenao" for juanjhenao.goatcounter.com
     endpoint: "",    // e.g. "https://script.google.com/macros/s/XXXX/exec"
-    whatsapp: "573152147544",
     email: "juanjosehenao20@gmail.com",
   };
   const KNOWN = [
@@ -76,7 +75,6 @@
 
   window.JJ = {
     src, track, email: CFG.email,
-    wa: (text, magnet) => `https://wa.me/${CFG.whatsapp}?text=${encodeURIComponent(text + tag(magnet))}`,
     mail: (subject, body, magnet) => `mailto:${CFG.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body + tag(magnet))}`,
   };
 })();

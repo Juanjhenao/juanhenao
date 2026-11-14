@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Hook File: 24 fill-in-the-blank ad hooks · Juan José Henao</title>
 <meta name="description" content="24 fill-in-the-blank hooks for short-form ads, in six families. Type your product and audience, copy the hooks that fit.">
-<meta name="theme-color" content="#0A0A0B">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230A0A0B'/%3E%3Cpath d='M12 9v14l11-7z' fill='%23FF5A2B'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#0D1321">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230D1321'/%3E%3Cpath d='M12 9v14l11-7z' fill='%23F0EBD8'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
@@ -32,7 +32,7 @@
     <h3>A hook is only as good as its first frame.</h3>
     <p>Words are half of it. The other half is what moves, what is on screen and what it sounds like in the first second. That part is what I do.</p>
     <div class="row">
-      <a class="btn btn--accent" id="wa" target="_blank" rel="noopener" data-track="wa-hooks" href="#">Have me cut these into ads</a>
+      <a class="btn btn--accent" id="wa" data-track="email-hooks" href="#">Have me cut these into ads</a>
       <a class="btn btn--ghost" href="checklist.html" data-track="open-checklist">Score your current ad</a>
     </div>
   </div>
@@ -108,7 +108,7 @@
   fields.forEach((f) => f.addEventListener("input", () => { render(); wa(); }));
   function wa() {
     const p = val("product");
-    document.getElementById("wa").href = JJ.wa(`Hi Juan, I used the Hook File${p ? ` for ${p}` : ""} and want to turn the best hooks into ads.`, "hook-file");
+    document.getElementById("wa").href = JJ.mail("Hooks into ads", `Hi Juan, I used the Hook File${p ? ` for ${p}` : ""} and want to turn the best hooks into ads.`, "hook-file");
   }
   render(); wa(); JJ.track("open-hook-file");
 </script>

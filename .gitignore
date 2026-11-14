@@ -9,3 +9,4 @@ google.txt
 node_modules/
 whatsapp/
 .dist/
+private/
